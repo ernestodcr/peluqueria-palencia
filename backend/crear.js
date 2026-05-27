@@ -1,8 +1,9 @@
 require("dotenv").config();
 const pool = require('./db');
 const fs = require('fs');
+const path = require('path');
 
-const planoSql = fs.readFileSync('./init.sql', 'utf-8');
+const planoSql = fs.readFileSync(path.join(__dirname, 'init.sql'), 'utf-8');
 
 pool.query(planoSql, (err, res) => {
     if (err) {
@@ -10,5 +11,4 @@ pool.query(planoSql, (err, res) => {
     } else {
         console.log('¡Tablas creadas con éxito en Render!');
     }
-    pool.end();
 });

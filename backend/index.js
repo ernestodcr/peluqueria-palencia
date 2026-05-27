@@ -8,7 +8,6 @@ const authRoutes = require("./routes/auth.routes");
 const servicioRoutes  = require("./routes/servicio.routes");
 const citaRoutes = require("./routes/cita.routes");
 
-
 // Midldlewares
 app.use(cors());
 app.use(express.json())
