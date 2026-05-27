@@ -8,6 +8,15 @@ const crearCita = async (req, res) => {
     }
 
     try{
+        const horarioOcupado = await pool.query(
+            'SELECT * FROM citas WHERE fecha_hora = $1 AND estado != $2',
+            [fecha_hora, 'cancelada'] // Ignoramos las citas canceladas del historial
+        );
+
+        if (horarioOcupado.rows.length > 0) {
+            return res.status(400).json({ error: "Ese día y hora ya están reservados por otro cliente. Por favor, elige otro hueco." });
+        }
+
         const insertarCita = await pool.query(
             `INSERT INTO citas (usuario_id, servicio_id, fecha_hora)
             VALUES ($1, $2, $3)
@@ -25,6 +34,7 @@ const crearCita = async (req, res) => {
         return res.status(500).json({error: "ERROR INTERNO DEL SERVIDOR"});
     }
 }
+
 
 const obtenerTodasCitas = async (req, res) => {
     try {
