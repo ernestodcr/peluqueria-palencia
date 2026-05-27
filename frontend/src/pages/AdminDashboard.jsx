@@ -22,7 +22,6 @@ function AdminDashboard({ alCambiarVista }) {
     cargarAgenda();
   }, []);
 
-  // 🚀 FUNCIÓN MÁGICA: Transforma "2026-06-15T10:30:00.000Z" en "15/06/2026 - 10:30"
   const formatearFechaHora = (isoString) => {
     if (!isoString) return "Sin fecha";
     const fechaObj = new Date(isoString);
@@ -135,22 +134,18 @@ function AdminDashboard({ alCambiarVista }) {
                       key={cita.id_cita}
                       className="hover:bg-gray-50/50 transition-colors"
                     >
-                      {/* 1. Pintamos la fecha formateada en cristiano */}
                       <td className="p-4 pl-6 font-mono font-semibold text-gray-900">
                         {formatearFechaHora(cita.fecha_hora)}
                       </td>
 
-                      {/* 2. Pintamos el Nombre Real del Cliente que viaja del JOIN */}
                       <td className="p-4 font-bold text-gray-900">
                         {cita.cliente_nombre}
                       </td>
 
-                      {/* 3. Pintamos el Teléfono por si le tienes que llamar por retraso */}
                       <td className="p-4 text-gray-500">
                         {cita.cliente_telefono}
                       </td>
 
-                      {/* 4. Pintamos el Nombre del Servicio y su precio */}
                       <td className="p-4">
                         <span className="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-md font-bold">
                           {cita.servicio_nombre} ({cita.servicio_precio}€)

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { servicioService } from '../services/servicio.service';
 import ServiciosList from '../components/ServiciosList';
+import MisCitasList from '../components/MisCitasList'; // Importamos el nuevo componente
 
 function Dashboard({ alCambiarVistaAdmin }) {
   const { usuario, logout } = useAuth();
@@ -40,14 +41,25 @@ function Dashboard({ alCambiarVistaAdmin }) {
           </div>
         </div>
       </nav>
+
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="bg-gradient-to-r from-gray-950 to-gray-800 rounded-3xl p-8 text-white shadow-xl mb-10">
           <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight">Estilo y Cuidado Profesional</h2>
           <p className="mt-2 text-sm text-gray-300 max-w-md font-light">Reserva tus citas online de forma cómoda y rápida.</p>
         </div>
+
         {cargando && <div className="text-center py-20 text-sm font-medium text-gray-400 animate-pulse">Sincronizando...</div>}
         {error && <div className="p-4 bg-red-50 border text-red-700 text-sm rounded-2xl mb-6">⚠️ {error}</div>}
-        {!cargando && !error && <ServiciosList servicios={servicios} rolUsuario={usuario.rol} />}
+        
+        {!cargando && !error && (
+          <>
+            {/* Catálogo de Servicios */}
+            <ServiciosList servicios={servicios} rolUsuario={usuario.rol} />
+            
+            {/* Listado Exclusivo de Citas del Cliente */}
+            <MisCitasList idUsuario={usuario.id_usuario} />
+          </>
+        )}
       </main>
     </div>
   );

@@ -12,12 +12,43 @@ export const citaService = {
         },
         body: JSON.stringify(datosCita)
       });
-
       const datos = await respuesta.json();
       if (!respuesta.ok) throw new Error(datos.error || 'No se pudo agendar la cita.');
       return datos;
     } catch (error) {
       console.error("Error en citaService.crearCita:", error);
+      throw error;
+    }
+  },
+
+  obtenerCitasUsuario: async (idUsuario) => {
+    try {
+      const token = localStorage.getItem('token');
+      const respuesta = await fetch(`${API_URL}/usuario/${idUsuario}`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const datos = await respuesta.json();
+      if (!respuesta.ok) throw new Error(datos.error || 'Error al obtener tus citas.');
+      return datos.citas || datos;
+    } catch (error) {
+      console.error("Error en citaService.obtenerCitasUsuario:", error);
+      throw error;
+    }
+  },
+
+  cancelarCitaCliente: async (idCita) => {
+    try {
+      const token = localStorage.getItem('token');
+      const respuesta = await fetch(`${API_URL}/${idCita}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const datos = await respuesta.json();
+      if (!respuesta.ok) throw new Error(datos.error || 'No se pudo cancelar la cita.');
+      return datos;
+    } catch (error) {
+      console.error("Error en citaService.cancelarCitaCliente:", error);
       throw error;
     }
   }

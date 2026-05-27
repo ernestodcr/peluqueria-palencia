@@ -28,7 +28,6 @@ const crearCita = async (req, res) => {
 
 const obtenerTodasCitas = async (req, res) => {
     try {
-        // 🚀 SQL AVANZADO: Cruzamos las tablas de usuarios y servicios para extraer los nombres reales
         const resultado = await pool.query(
             `SELECT 
                 c.id_cita, 
@@ -52,6 +51,34 @@ const obtenerTodasCitas = async (req, res) => {
     }
 };
 
+// OBTENER CITAS DE UN USUARIO ESPECÍFICO
+const obtenerCitasPorUsuario = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const resultado = await pool.query(
+            `SELECT c.id_cita, c.fecha_hora, c.estado, s.nombre AS servicio_nombre, s.precio AS servicio_precio
+             FROM citas c
+             INNER JOIN servicios s ON c.servicio_id = s.id_servicio
+             WHERE c.usuario_id = $1`,
+            [id]
+        );
+        return res.status(200).json({ citas: resultado.rows });
+    } catch (error) {
+        console.error("Error en obtenerCitasPorUsuario", error);
+        return res.status(500).json({ error: "ERROR INTERNO DEL SERVIDOR" });
+    }
+};
 
+// CANCELAR / BORRAR UNA CITA
+const cancelarCita = async (req, res) => {
+    const { id } = req.params;
+    try {
+        await pool.query('DELETE FROM citas WHERE id_cita = $1', [id]);
+        return res.status(200).json({ mensaje: "Cita eliminada correctamente" });
+    } catch (error) {
+        console.error("Error en cancelarCita", error);
+        return res.status(500).json({ error: "ERROR INTERNO DEL SERVIDOR" });
+    }
+};
 
-module.exports = { crearCita, obtenerTodasCitas }
+module.exports = { crearCita, obtenerTodasCitas, obtenerCitasPorUsuario, cancelarCita };
