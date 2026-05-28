@@ -8,10 +8,11 @@ const verificarToken = (req, res, next) => {
     }
 
     try {
-        const token = bearerHeader.split(" ")[1];
-        const verificado = jwt.verify(token, process.env.JWT_SECRET);        
-        req.usuario = verificado;
+        const token = bearerHeader.split(" ")[1]; 
         
+        const verificado = jwt.verify(token, process.env.JWT_SECRET);
+        
+        req.usuario = verificado;
         next();
     } catch (error) {
         return res.status(401).json({ error: "Token inválido o expirado." });
