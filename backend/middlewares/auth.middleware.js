@@ -8,9 +8,9 @@ const verificarToken = (req, res, next) => {
     }
 
     try {
-        const token = bearerHeader.split(" ")[1]; 
-        
-        const verificado = jwt.verify(token, process.env.JWT_SECRET);
+        const partes = bearerHeader.split(" ");
+        const tokenLimpio = partes[1]; 
+        const verificado = jwt.verify(tokenLimpio, process.env.JWT_SECRET);
         
         req.usuario = verificado;
         next();
@@ -18,6 +18,7 @@ const verificarToken = (req, res, next) => {
         return res.status(401).json({ error: "Token inválido o expirado." });
     }
 };
+
 
 const esAdmin = (req, res, next) => {
     if (!req.usuario || req.usuario.rol !== "admin") {
