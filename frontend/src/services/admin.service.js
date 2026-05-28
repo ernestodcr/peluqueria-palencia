@@ -82,6 +82,21 @@ export const adminService = {
       console.error("Error al crear servicio:", error);
       throw error;
     }
+  },
+
+  deshabilitarServicioCatalogo: async (id_servicio) => {
+    try {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/servicios/deshabilitar/${id_servicio}`, {
+        method: 'PUT'
+      });
+      const datos = await respuesta.json();
+      if (!respuesta.ok) throw new Error(datos.error || 'Error al deshabilitar el servicio');
+      return datos;
+    } catch (error) {
+      console.error("Error en deshabilitarServicioCatalogo:", error);
+      throw error;
+    }
   }
+
 
 };

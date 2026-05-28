@@ -329,6 +329,7 @@ function AdminDashboard({ alCambiarVista }) {
                   <TarjetaServicio
                     key={servicio.id_servicio}
                     servicio={servicio}
+                    setServicios={setServicios}
                   />
                 )
               )}
