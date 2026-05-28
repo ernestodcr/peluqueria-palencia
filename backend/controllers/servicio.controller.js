@@ -46,7 +46,7 @@ const deshabilitarServicio = async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
-            "UPDATE servicios SET activo = FALSE WHERE id_servicio = $1 RETURNING id_servicio, nombre, activo",
+            "UPDATE servicios SET activo = false WHERE id_servicio = $1 RETURNING id_servicio, nombre, activo",
             [id]
         );
 
@@ -56,12 +56,13 @@ const deshabilitarServicio = async (req, res) => {
 
         return res.status(200).json({
             mensaje: "Servicio deshabilitado correctamente",
-            servicio: resultado.rows[0]
+            servicio: resultado.rows[0] // Mandamos el objeto limpio
         });
     } catch (error) {
         console.error("Error en deshabilitarServicio:", error);
         return res.status(500).json({ error: "Error interno del servidor" });
     }
 };
+
 
 module.exports = { crearServicio, obtenerServicios, deshabilitarServicio };
