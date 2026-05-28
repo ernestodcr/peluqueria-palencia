@@ -49,7 +49,8 @@ const obtenerTodasCitas = async (req, res) => {
                 s.precio AS servicio_precio
              FROM citas c
              INNER JOIN usuarios u ON c.usuario_id = u.id_usuario
-             INNER JOIN servicios s ON c.servicio_id = s.id_servicio`
+             INNER JOIN servicios s ON c.servicio_id = s.id_servicio
+             WHERE u.activo = TRUE`
         );
 
         return res.status(200).json({

@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { adminService } from "../services/admin.service";
+import ModalClientes from "../components/ModalClientes"; // <-- Importación modular
 
 function AdminDashboard({ alCambiarVista }) {
   const { logout } = useAuth();
   const [agenda, setAgenda] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
+  const [modalClientesAbierto, setModalClientesAbierto] = useState(false);
+  const [clientes, setClientes] = useState([]);
 
   useEffect(() => {
     const cargarAgenda = async () => {
@@ -37,7 +40,6 @@ function AdminDashboard({ alCambiarVista }) {
 
   return (
     <div className="min-h-screen bg-gray-50/50 font-sans antialiased">
-      {/* Navbar */}
       <nav className="bg-black text-white sticky top-0 z-50 shadow-md">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -50,10 +52,18 @@ function AdminDashboard({ alCambiarVista }) {
           </div>
           <div className="flex items-center gap-4">
             <button
-              onClick={alCambiarVista}
+              onClick={async () => {
+                setModalClientesAbierto(true);
+                try {
+                  const data = await adminService.obtenerTodosLosClientes();
+                  setClientes(data.clientes || []);
+                } catch (err) {
+                  console.error("Error al cargar clientes:", err.message);
+                }
+              }}
               className="text-xs font-bold text-gray-300 hover:text-white bg-gray-900 px-4 py-2 rounded-xl border border-gray-800 cursor-pointer"
             >
-              Ver Vista Cliente
+              Ver lista clientes
             </button>
             <button
               onClick={logout}
@@ -66,7 +76,6 @@ function AdminDashboard({ alCambiarVista }) {
       </nav>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Tarjetas Informativas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-xs">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -92,7 +101,6 @@ function AdminDashboard({ alCambiarVista }) {
           </div>
         </div>
 
-        {/* Tabla de Reservas */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="p-6 border-b border-gray-50">
             <h2 className="text-xl font-bold text-gray-900 tracking-tight">
@@ -165,6 +173,12 @@ function AdminDashboard({ alCambiarVista }) {
           )}
         </div>
       </main>
+
+      <ModalClientes 
+        abierto={modalClientesAbierto} 
+        alCerrar={() => setModalClientesAbierto(false)} 
+        clientes={clientes} 
+      />
     </div>
   );
 }
