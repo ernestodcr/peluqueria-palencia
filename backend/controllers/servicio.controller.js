@@ -29,18 +29,19 @@ const crearServicio = async (req,res) => {
 };
 
 const obtenerServicios = async (req, res) => {
-    try{
-        const resultado = await pool.query('SELECT * FROM servicios WHERE activo = TRUE');
+    try {
+        const resultado = await pool.query('SELECT * FROM servicios ORDER BY id_servicio ASC');
 
         return res.status(200).json({
             servicios: resultado.rows
         });
 
-    }catch(error) {
+    } catch(error) {
         console.error("Error en servicio.controller.js en la funcion obtenerServicios" , error);
         return res.status(500).json({ error: "ERROR" }); 
     }
 }
+
 
 const deshabilitarServicio = async (req, res) => {
     const { id } = req.params;
