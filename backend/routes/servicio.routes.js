@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
 
-const { crearServicio, obtenerServicios } = require("../controllers/servicio.controller");
+const { crearServicio, obtenerServicios, deshabilitarServicio } = require("../controllers/servicio.controller");
 
-//POST: MANDAR 
+//POST: MANDAR
 router.post("/", crearServicio);
 
 //GET: RECIBIR
 router.get("/", obtenerServicios);
+
+//PUT: MODIICAR
+router.put("/deshabilitar/:id", deshabilitarServicio);
 
 module.exports = router;

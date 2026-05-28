@@ -20,38 +20,68 @@ export const adminService = {
 
   obtenerTodosLosClientes: async () => {
     try {
-      const token = localStorage.getItem('token');
       const respuesta = await fetch(`${API_URL_AUTH}/usuarios/clientes`, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${token}` }
+        method: 'GET'
       });
-      const datos = await respuesta.json();
-      if (!respuesta.ok) throw new Error(datos.error || 'Error al cargar los clientes.');
-      return datos; 
+      return await respuesta.json(); 
     } catch (error) {
-      console.error("Error en adminService.obtenerTodosLosClientes:", error);
-      throw error;
+      return { clientes: [] };
     }
   },
 
   darBajaCliente: async (id_usuario, motivo_baja) => {
     try {
-      const token = localStorage.getItem('token');
       const respuesta = await fetch(`${API_URL_AUTH}/usuarios/baja/${id_usuario}`, {
-        method: 'PUT', // Método de modificación
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ motivo_baja })
+        method: 'PUT', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ motivo_baja }) 
       });
+      return await respuesta.json();
+    } catch (error) {
+      return { error: "No se pudo conectar con el servidor" };
+    }
+  },
 
+  actualizarDatosCliente: async (id_usuario, datosActualizados) => {
+    try {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/usuarios/baja/${id_usuario}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosActualizados)
+      });
+      return await respuesta.json();
+    } catch (error) {
+      console.error("Error en adminService.actualizarDatosCliente:", error);
+      throw error;
+    }
+  },
+
+  obtenerTodosLosServicios: async () => {
+    try {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/servicios`, {
+        method: 'GET'
+      });
+      return await respuesta.json();
+    } catch (error) {
+      console.error("Error al obtener servicios:", error);
+      return { servicios: [] };
+    }
+  },
+
+  crearNuevoServicio: async (datosServicio) => {
+    try {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/servicios`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datosServicio)
+      });
       const datos = await respuesta.json();
-      if (!respuesta.ok) throw new Error(datos.error || 'Error al tramitar la baja.');
+      if (!respuesta.ok) throw new Error(datos.error || 'Error al crear el servicio');
       return datos;
     } catch (error) {
-      console.error("Error en adminService.darBajaCliente:", error);
+      console.error("Error al crear servicio:", error);
       throw error;
     }
   }
+
 };
