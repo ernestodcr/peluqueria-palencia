@@ -12,7 +12,7 @@ const crearServicio = async (req,res) => {
         const nuevoServicio = await pool.query(
             `INSERT INTO servicios (nombre, descripcion, tipo, precio, duracion) 
             VALUES ($1, $2, $3, $4, $5)
-            RETURNING id_servicio, nombre, descripcion, tipo, precio, duracion, activo`
+            RETURNING id_servicio, nombre, descripcion, tipo, precio, duracion, activo`,
             [nombre, descripcion, tipo, precio, duracion]
         );
 
