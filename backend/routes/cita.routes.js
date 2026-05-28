@@ -10,9 +10,7 @@ const {
 
 router.post("/", crearCita);
 router.get("/", obtenerTodasCitas);
-
 router.get("/usuario/:id", obtenerCitasPorUsuario);
-
-router.delete("/:id", cancelarCita);
+router.put("/:id", cancelarCita);
 
 module.exports = router;
