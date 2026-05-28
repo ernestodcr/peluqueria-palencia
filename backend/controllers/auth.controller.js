@@ -79,7 +79,49 @@ const loginUsuario = async (req, res) => {
         console.error("ERROR REAL EN EL LOGIN: ", error);
         return res.status(500).json({error: "Error interno del servidor"});
     }
-}
+};
+
+const darBajaUsuario = async (req, res) => {
+    const { id } = req.params;
+    const { motivo_baja } = req.body;
+
+    if (!motivo_baja) {
+        return res.status(400).json({ error: "Es obligatorio poner un motivo de baja" });
+    }
+
+    try {
+        const usuarioActualizado = await pool.query(
+            `UPDATE usuarios 
+             SET activo = FALSE, motivo_baja = $1 
+             WHERE id_usuario = $2 
+             RETURNING id_usuario, nombre, activo, motivo_baja`,
+            [motivo_baja, id]
+        );
+
+        if (usuarioActualizado.rows.length === 0) {
+            return res.status(404).json({ error: "Usuario no encontrado" });
+        }
+
+        return res.status(200).json({
+            mensaje: "Usuario dado de baja correctamente",
+            usuario: usuarioActualizado.rows[0]
+        });
+
+    } catch (error) {
+        console.error("Error al dar de baja usuario: ", error);
+        return res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+const obtenerClientes = async (req, res) => {
+    try {
+        const resultado = await pool.query("SELECT id_usuario, nombre, email, telefono, activo FROM usuarios WHERE rol = 'cliente'");
+        return res.status(200).json({ clientes: resultado.rows });
+    } catch (error) {
+        console.error("Error al obtener clientes: ", error);
+        return res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
 
 //EXPORTAR PARA RUTA PUEDA USARLO
-module.exports = { registrarUsuario, loginUsuario };
+module.exports = { registrarUsuario, loginUsuario, darBajaUsuario, obtenerClientes  };
