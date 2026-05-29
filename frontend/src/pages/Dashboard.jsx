@@ -82,9 +82,13 @@ function Dashboard({ alCambiarVistaAdmin }) {
 
   const obtenerEstadoReal = (cita) => {
     const ahora = new Date();
+
     const fechaCita = limpiarFecha(cita.fecha_hora);
 
-    const duracion = parseInt(cita.servicio_duracion) || 30;
+    const duracion =
+      parseInt(cita.servicio_duracion) ||
+      parseInt(cita.duracion) ||
+      30;
 
     const fechaFin = new Date(
       fechaCita.getTime() + duracion * 60000
@@ -224,7 +228,7 @@ function Dashboard({ alCambiarVistaAdmin }) {
               </h2>
 
               <p className="text-sm text-gray-500 mt-1">
-                Explora todos los servicios disponibles.
+                Explora todos los tratamientos disponibles.
               </p>
             </div>
 
@@ -388,7 +392,10 @@ function Dashboard({ alCambiarVistaAdmin }) {
                         </td>
 
                         <td className="px-4 py-4 text-sm whitespace-nowrap">
-                          {cita.servicio_duracion || 30} min
+                          {cita.servicio_duracion ||
+                            cita.duracion ||
+                            30}{' '}
+                          min
                         </td>
 
                         <td className="px-4 py-4 text-sm font-semibold whitespace-nowrap">
@@ -446,7 +453,7 @@ function Dashboard({ alCambiarVistaAdmin }) {
               </h2>
 
               <p className="mt-2 text-sm text-gray-500">
-                Vas a cancelar tu cita para el servicio de{' '}
+                Vas a cancelar tu cita para el servicio{' '}
                 <span className="font-semibold text-gray-800">
                   {citaSeleccionada?.servicio_nombre}
                 </span>
@@ -461,7 +468,9 @@ function Dashboard({ alCambiarVistaAdmin }) {
 
                 <textarea
                   value={motivoCancelacion}
-                  onChange={(e) => setMotivoCancelacion(e.target.value)}
+                  onChange={(e) =>
+                    setMotivoCancelacion(e.target.value)
+                  }
                   placeholder="Indica el motivo de la cancelación..."
                   className="w-full h-28 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none resize-none focus:bg-white focus:ring-2 focus:ring-red-500"
                 />
