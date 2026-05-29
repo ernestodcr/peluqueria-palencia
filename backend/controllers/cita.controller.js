@@ -59,7 +59,13 @@ const obtenerCitasPorUsuario = async (req, res) => {
     const { id } = req.params;
     try {
         const resultado = await pool.query(
-            `SELECT c.id_cita, c.fecha_hora, c.estado, s.nombre AS servicio_nombre, s.precio AS servicio_precio
+            `SELECT 
+                c.id_cita, 
+                c.fecha_hora, 
+                c.estado, 
+                s.nombre AS servicio_nombre, 
+                s.precio AS servicio_precio,
+                s.duracion AS servicio_duracion
              FROM citas c
              INNER JOIN servicios s ON c.servicio_id = s.id_servicio
              WHERE c.usuario_id = $1`,
@@ -71,6 +77,7 @@ const obtenerCitasPorUsuario = async (req, res) => {
         return res.status(500).json({ error: "ERROR INTERNO DEL SERVIDOR" });
     }
 };
+
 
 const cancelarCita = async (req, res) => {
     const { id } = req.params;
