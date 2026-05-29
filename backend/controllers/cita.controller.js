@@ -39,7 +39,8 @@ const obtenerTodasCitas = async (req, res) => {
                 u.nombre AS cliente_nombre, 
                 u.telefono AS cliente_telefono,
                 s.nombre AS servicio_nombre,
-                s.precio AS servicio_precio
+                s.precio AS servicio_precio,
+                s.duracion AS servicio_duracion
              FROM citas c
              INNER JOIN usuarios u ON c.usuario_id = u.id_usuario
              INNER JOIN servicios s ON c.servicio_id = s.id_servicio

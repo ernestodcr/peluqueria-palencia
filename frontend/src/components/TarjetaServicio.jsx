@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { adminService } from "../services/admin.service";
 
-export default function TarjetaServicio({ servicio, setServicios, alEditar }) {
+export default function TarjetaServicio({ servicio, setServicios, alEditar, rolUsuario = "cliente", alReservar }) {
   const [cargando, setCargando] = useState(false);
 
   const colorCategoria = {
@@ -39,7 +39,7 @@ export default function TarjetaServicio({ servicio, setServicios, alEditar }) {
         <div className="flex justify-between items-start gap-2 mb-3">
           <h4 className="font-bold text-gray-900 text-base tracking-tight leading-snug">{servicio.nombre}</h4>
           <div className="flex items-center gap-2 shrink-0 relative z-20">
-            {servicio.activo && (
+            {servicio.activo && rolUsuario === "admin" && (
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -62,28 +62,42 @@ export default function TarjetaServicio({ servicio, setServicios, alEditar }) {
       </div>
       
       <div className="flex justify-between items-center pt-3 border-t border-gray-50 mt-auto h-10">
-        <div className="flex items-center gap-1 text-gray-400 group-hover:opacity-0 transition-opacity duration-200">
+        <div className="flex items-center gap-1 text-gray-400">
           <span>🕒</span>
           <span className="text-xs font-mono font-bold">{servicio.duracion} min</span>
         </div>
 
         <div className="absolute bottom-5 right-5 flex items-center gap-3 z-20">
           {servicio.activo ? (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  manejarDeshabilitar();
-                }}
-                disabled={cargando}
-                className="opacity-0 group-hover:opacity-100 bg-red-50 text-red-600 hover:bg-red-100 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-red-100 transition-all duration-200 cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
-              >
-                {cargando ? "..." : "Deshabilitar"}
-              </button>
-              <span className="text-xl font-black text-gray-900 transition-all duration-200">
-                {parseFloat(servicio.precio).toFixed(2)}€
-              </span>
-            </>
+            rolUsuario === "admin" ? (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    manejarDeshabilitar();
+                  }}
+                  disabled={cargando}
+                  className="opacity-0 group-hover:opacity-100 bg-red-50 text-red-600 hover:bg-red-100 text-[11px] font-bold px-3 py-1.5 rounded-xl border border-red-100 transition-all duration-200 cursor-pointer disabled:bg-gray-100 disabled:text-gray-400"
+                >
+                  {cargando ? "..." : "Deshabilitar"}
+                </button>
+                <span className="text-xl font-black text-gray-900 transition-all duration-200">
+                  {parseFloat(servicio.precio).toFixed(2)}€
+                </span>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => alReservar(servicio)}
+                  className="bg-black hover:bg-gray-800 text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all duration-200 cursor-pointer shadow-xs"
+                >
+                  Reservar cita
+                </button>
+                <span className="text-base font-black text-gray-900">
+                  {parseFloat(servicio.precio).toFixed(2)}€
+                </span>
+              </>
+            )
           ) : (
             <span className="text-xl font-black text-gray-900">
               {parseFloat(servicio.precio).toFixed(2)}€

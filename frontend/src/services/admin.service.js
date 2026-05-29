@@ -113,5 +113,19 @@ export const adminService = {
       console.error("Error en adminService.cancelarCitaAgenda:", error);
       throw error;
     }
+  },
+
+  obtenerCitasDeUsuario: async (id_usuario) => {
+    try {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/citas/usuario/${id_usuario}`, {
+        method: 'GET'
+      });
+      const datos = await respuesta.json();
+      return datos.citas || [];
+    } catch (error) {
+      console.error("Error al obtener las citas del usuario:", error);
+      return [];
+    }
   }
+
 };

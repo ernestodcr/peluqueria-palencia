@@ -257,6 +257,7 @@ function AdminDashboard({ alCambiarVista }) {
                     servicio={servicio}
                     setServicios={setServicios}
                     alEditar={abrirModalEdicion}
+                    rolUsuario="admin"
                   />
                 ))}
               </div>
