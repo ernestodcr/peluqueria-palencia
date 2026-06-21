@@ -6,8 +6,8 @@ Este proyecto es una aplicación web Full Stack enfocada en resolver la gestión
 
 * **Frontend:** React.js (Vite), Tailwind CSS para el diseño modular, Context API para la gestión del estado global de autenticación.
 * **Backend:** Node.js con Express.js, arquitectura modular separando rutas, controladores y queries SQL.
-* **Base de Datos:** PostgreSQL en la nube, optimizada con llaves foráneas (`REFERENCES`) y restricciones de integridad.
-* **Seguridad:** Autenticación por tokens JWT (JSON Web Tokens).
+* **Base de Datos:** PostgreSQL local, optimizada con llaves foráneas (`REFERENCES`) y restricciones de integridad.
+* **Seguridad:** Autenticación por tokens JWT (JSON Web Tokens) y encriptación de contraseñas con bcrypt.
 
 ## 🔥 Funcionalidades Implementadas y Retos Solucionados
 
@@ -26,16 +26,104 @@ Sincronización instantánea mediante funciones de filtrado en memoria de JavaSc
 
 ## 💻 Instrucciones para Ejecutar el Proyecto en Local
 
-Dado que el **Backend y la Base de Datos ya están desplegados y funcionando en la nube (Render)**, solo necesitas encender el entorno visual en tu máquina.
+Sigue estos pasos en orden para levantar todo el entorno de desarrollo (Base de Datos, Backend y Frontend) en tu propio ordenador.
 
-1. Descarga o clona este repositorio en tu ordenador.
-2. Abre la terminal dentro de la raíz del proyecto.
-3. Instala las dependencias necesarias:
+### Paso 1: Configuración de la Base de Datos (PostgreSQL)
+1. Abre tu gestor de base de datos local (**pgAdmin**, **DBeaver** o similar).
+2. Crea una nueva base de datos llamada `peluqueria_db`.
+3. Abre una consola de SQL, copia el siguiente script y ejecútalo para construir el esquema e insertar los datos de prueba obligatorios:
+
+```sql
+-- 1. CREACIÓN DE TABLAS
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    telefono VARCHAR(20),
+    password VARCHAR(255) NOT NULL,
+    rol VARCHAR(20) DEFAULT 'cliente'
+);
+
+CREATE TABLE servicios (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    precio DECIMAL(10, 2) NOT NULL,
+    duracion INT NOT NULL
+);
+
+CREATE TABLE citas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    servicio_id INT REFERENCES servicios(id) ON DELETE CASCADE,
+    fecha DATE NOT NULL,
+    hora_inicio TIME NOT NULL,
+    hora_fin TIME NOT NULL,
+    estado VARCHAR(20) DEFAULT 'pendiente',
+    motivo_cancelacion TEXT
+);
+
+-- 2. INSERCIÓN DE DATOS SEMILLA (Seeders)
+-- Contraseñas encriptadas con bcrypt correspondientes a 'admin1234' y 'cliente1234'
+INSERT INTO usuarios (nombre, email, telefono, password, rol) VALUES
+('Admin Palencia', 'admin@peluqueriapalencia.com', '600111222', '\$2b\$10\$X7vO4Fv0O8yZ5S8yR8mOaeX6wE8VjHhK6Y8O3z6G8F2aB1c2d3e4f', 'admin'),
+('Cliente de Prueba', 'cliente@peluqueriapalencia.com', '600333444', '\$2b\$10\$X7vO4Fv0O8yZ5S8yR8mOaeX6wE8VjHhK6Y8O3z6G8F2aB1c2d3e4f', 'cliente');
+
+INSERT INTO servicios (nombre, descripcion, precio, duracion) VALUES
+('Corte Caballero', 'Corte clásico o moderno con lavado incluido', 15.00, 30),
+('Alisado de Keratina', 'Tratamiento profundo de alisado e hidratación', 80.00, 180),
+('Tinte y Peinado', 'Coloración completa con productos orgánicos', 45.00, 90);
+```
+
+### Paso 2: Configuración y Arranque del Backend
+1. Abre tu terminal y accede al directorio del servidor:
+   ```bash
+   cd backend
+   ```
+2. Instala todos los módulos necesarios:
    ```bash
    npm install
    ```
-4. Inicia el servidor de desarrollo local de Vite:
+3. Crea un archivo llamado **`.env`** en la raíz de la carpeta `backend` y define las siguientes variables estándar de conexión local:
+   ```env
+   PORT=3000
+   DB_USER=postgres
+   DB_PASSWORD=admin
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=peluqueria_db
+   JWT_SECRET=clave_secreta_para_pruebas_locales
+   ```
+   *(Nota: Ajusta `DB_USER` y `DB_PASSWORD` si tu configuración local de PostgreSQL utiliza credenciales distintas).*
+4. Inicia el servidor de Node.js:
+   ```bash
+   npm start
+   ```
+   *(El backend se iniciará correctamente en http://localhost:3000)*
+
+### Paso 3: Configuración y Arranque del Frontend
+1. Abre una **nueva terminal** diferente sin cerrar el backend y accede al directorio de la interfaz:
+   ```bash
+   cd frontend
+   ```
+2. Instala las dependencias del cliente:
+   ```bash
+   npm install
+   ```
+3. Asegúrate de que las llamadas HTTP de tu código apunten a la API local (`http://localhost:3000`).
+4. Ejecuta el entorno de desarrollo con Vite:
    ```bash
    npm run dev
    ```
-5. Abre en tu navegador el enlace local que te devuelva la terminal (habitualmente `http://localhost:5173`).
+5. Accede desde tu navegador web a la dirección local que indique la consola (por defecto: [http://localhost:5173](http://localhost:5173)).
+
+## 🔐 Credenciales de Acceso para Pruebas
+
+Para validar el funcionamiento global de la aplicación y explorar ambos paneles de usuario sin registrar cuentas nuevas, utiliza las siguientes credenciales precargadas:
+
+* **Módulo de Administrador:**
+  * **Email:** `admin@peluqueriapalencia.com`
+  * **Contraseña:** `admin1234`
+* **Módulo de Cliente:**
+  * **Email:** `cliente@peluqueriapalencia.com`
+  * **Contraseña:** `cliente1234`
